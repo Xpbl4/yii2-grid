@@ -138,6 +138,8 @@ class DataColumn extends \yii\grid\DataColumn
 					($sort = $this->grid->dataProvider->getSort()) !== false && $sort->hasAttribute($this->attribute)) {
 					$sorting = $sort->link($this->attribute, array_merge($this->sortLinkOptions, ['label' => '']));
 					//$sorting = Html::tag('span', $sorting, ['class' => 'input-group-addon']);
+				} else {
+					Html::addCssClass($this->filterOptions, 'unsorted');
 				}
 			}
 

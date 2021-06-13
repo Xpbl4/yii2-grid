@@ -167,23 +167,33 @@ class GridView extends \yii\grid\GridView
 	}
 
 	/**
-	 * Creates a [[DataColumn]] object based on a string in the format of "attribute:format:label".
+	 * Creates a [[DataColumn]] object based on a string in the format of "attribute:format|headerClass:label".
 	 * @param string $text the column specification string
 	 * @return DataColumn the column instance
 	 * @throws InvalidConfigException if the column specification is invalid
 	 */
 	protected function createDataColumn($text)
 	{
-		if (!preg_match('/^([^:]+)(:(\w*))?(:(.*))?$/', $text, $matches)) {
+		if (!preg_match('/^([^:]+)(:([^:]+))?(:(.*))?$/', $text, $matches)) {
 			throw new InvalidConfigException('The column must be specified in the format of "attribute", "attribute:format" or "attribute:format:label"');
 		}
+		$_attribute = $matches[1];
+		$_format = 'text';
+		$_options = [];
+		if (isset($matches[3])) {
+			$_formatOptions = @explode('|', $matches[3]);
+			$_format = $_formatOptions[0];
+			if (isset($_formatOptions[1])) $_options['class'] = $_formatOptions[1];
+		}
+		$_label = isset($matches[5]) ? $matches[5] : null;
 
 		return Yii::createObject([
 			'class' => $this->dataColumnClass ?: DataColumn::className(),
 			'grid' => $this,
-			'attribute' => $matches[1],
-			'format' => isset($matches[3]) ? $matches[3] : 'text',
-			'label' => isset($matches[5]) ? $matches[5] : null,
+			'attribute' => $_attribute,
+			'format' => $_format,
+			'label' => $_label,
+			'headerOptions' => $_options,
 		]);
 	}
 
