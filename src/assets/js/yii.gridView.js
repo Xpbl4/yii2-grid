@@ -3,9 +3,9 @@
  *
  * This is the JavaScript widget used by the yii\grid\GridView widget.
  *
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
@@ -92,6 +92,8 @@
 				var filterEvents = 'change.yiiGridView keydown.yiiGridView keyup.yiiGridView focusin.yiiGridView';
 				var filterProcess = false;
 				initEventHandler($e, 'filter', filterEvents, settings.filterSelector, function (event) {
+					if ($(event.target).is('input[type="checkbox"]')) return;
+
 					switch (event.type) {
 						case 'focusin': // prevent processing for both keydown and change events
 							$e.find('.table-update').removeClass('table-loading');
@@ -103,11 +105,11 @@
 							$e.find('.table-update').addClass('table-loading');
 							filterProcess = true;
 							if (settings.filterOnFocusOut && settings.filterOnFocusOut > 0) {
-						gridData[id].filterTimeout = setTimeout(function () {
-							methods.applyFilter.apply($e)
-						}, settings.filterOnFocusOut);
+								gridData[id].filterTimeout = setTimeout(function () {
+									methods.applyFilter.apply($e)
+								}, settings.filterOnFocusOut);
 							} else
-						methods.applyFilter.apply($e);
+								methods.applyFilter.apply($e);
 							break;
 						default:
 							return false;
@@ -258,3 +260,13 @@
 		gridEventHandlers[id][type] = {event: event, selector: selector};
 	}
 })(window.jQuery);
+
+/**
+ * Checks if the string is empty.
+ */
+String.prototype.isEmpty = function() {
+	if (typeof this === "undefined") return true;
+	if (typeof this === "string" && this.length === 0) return true;
+
+	return typeof this === "object" && this.length === 0;
+};
