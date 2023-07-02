@@ -24,7 +24,8 @@
     }
   ],
   "require": {
-    "yiisoft/yii2": "~2.0.0"
+    "yiisoft/yii2": "~2.0.0",
+    "xpbl4/yii2-assets": "*"
   },
   "autoload": {
     "psr-4": {
