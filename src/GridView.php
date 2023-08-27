@@ -48,6 +48,20 @@ class GridView extends \yii\grid\GridView
 	const ERROR_POS_SUMMARY = 'summary';
 	const ERROR_POS_TOOLTIP = 'tooltip';
 
+	const LAYOUT_DEFAULT = "{summary}\n{items}\n{pager}";
+	const LAYOUT_DATA_TABLES = <<<LAYOUT
+	<div class="row"><div class="col-sm-12">{toolbar}</div></div>
+	<div class="row"><div class="col-sm-12">{items}</div></div>
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="table-grid-info">{summary}</div>
+        </div>
+        <div class="col-sm-7">
+            <div class="table-grid-paginate">{pager}</div>
+        </div>
+    </div>
+LAYOUT;
+
 	/**
 	 * @var string the default data column class if the class name is not explicitly specified when configuring a data column.
 	 * Defaults to 'yii\grid\DataColumn'.
@@ -70,7 +84,7 @@ class GridView extends \yii\grid\GridView
 	/**
 	 * @var string whether the filters should be displayed in the grid view. Valid values include:
 	 *
-	 * - [[FILTER_POS_HEADER]]: the filters will be replace of each column's header cell.
+	 * - [[FILTER_POS_HEADER]]: the filters will be replaced of each column's header cell.
 	 * - [[FILTER_POS_BODY]]: the filters will be displayed right below each column's header cell.
 	 * - [[FILTER_POS_FOOTER]]: the filters will be displayed below each column's footer cell.
 	 */
@@ -81,6 +95,161 @@ class GridView extends \yii\grid\GridView
 	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
 	 */
 	public $filterRowOptions = ['class' => 'filters form-group form-group-sm'];
+
+	/**
+	 * @var array the HTML attributes for the grid table element.
+	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+	 */
+	public $tableOptions = ['class' => 'table table-grid table-bordered table-hover table-update'];
+
+	/**
+	 * @var array the HTML attributes for the container tag of the grid view.
+	 * The "tag" element specifies the tag name of the container element and defaults to "div".
+	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+	 */
+	public $options = ['class' => 'table-grid-wrapper dt-bootstrap'];
+
+	/**
+	 * @var string the layout that determines how different sections of the grid view should be organized.
+	 * The following tokens will be replaced with the corresponding section contents:
+	 *
+	 * - `{summary}`: the summary section. See [[renderSummary()]].
+	 * - `{errors}`: the filter model error summary. See [[renderErrors()]].
+	 * - '{buttons}': the grid action buttons. See [[renderButtons()]].
+	 * - '{toolbar}': the toolbar. See [[renderToolbar()]].
+	 * - '{entries}': the entries count. See [[renderEntries()]].
+	 * - `{items}`: the list items. See [[renderItems()]].
+	 * - `{sorter}`: the sorter. See [[renderSorter()]].
+	 * - `{pager}`: the pager. See [[renderPager()]].
+	 */
+	public $layout = self::LAYOUT_DATA_TABLES;
+
+	/**
+	 * @var array the configuration for the pager widget. By default, [[LinkPager]] will be
+	 * used to render the pager. You can use a different widget class by configuring the "class" element.
+	 * Note that the widget must support the `pagination` property which will be populated with the
+	 * [[\yii\data\BaseDataProvider::pagination|pagination]] value of the [[dataProvider]] and will overwrite this value.
+	 */
+	public $pager = ['class' => \yii\widgets\LinkPager::class, 'options' => ['class' => 'pagination pagination-sm']];
+
+	/** @var int[] the list for the pagination widget shows how many items should be showed on page.
+	 *  if -1 is set, all items will be showed
+	 */
+	public $pageSizeList = [10, 20, 50, 100, 0];
+
+	/**
+	 * @var array list of buttons. Each array element represents a single button
+	 * which can be specified as a string or an array of the following structure:
+	 *
+	 * - label: string, required, the button label.
+	 * - options: array, optional, the HTML attributes of the button.
+	 * - visible: bool, optional, whether this button is visible. Defaults to true.
+	 */
+	public $buttons = [];
+
+	/**
+	 * @var array the HTML attributes for the buttons container tag.
+	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+	 */
+	public $toolbarLayout = '<div class="pull-left">{buttons}</div><div class="pull-right">{entries}</div>';
+
+	public function init()
+	{
+		parent::init();
+
+		if (($pagination = $this->dataProvider->getPagination()) !== false) {
+			$min = min($this->pageSizeList);
+			$totalCount = $this->dataProvider->getTotalCount();
+			if ($min <= 0 && $totalCount > 1000) $min = 10;
+
+			$pagination->pageSizeLimit = [$min, min(1000, max($this->pageSizeList))];
+			$this->dataProvider->setPagination($pagination);
+		}
+	}
+
+	public function run()
+	{
+		$view = $this->getView();
+		GridViewAsset::register($view);
+
+		parent::run();
+	}
+
+
+	public function renderButtons()
+	{
+		if (!empty($this->buttons)) return \yii\bootstrap\ButtonGroup::widget([
+			'buttons' => $this->buttons,
+			'options' => ['class' => 'btn-group-sm'],
+			'encodeLabels' => false
+		]);
+
+		return '';
+	}
+
+	public function renderEntries()
+	{
+		return \yii\helpers\Html::tag('div', $this->renderEntriesContent(), ['class' => 'table-grid-length form-group form-group-sm']);
+	}
+
+	public function renderEntriesContent()
+	{
+		$pagination = $this->dataProvider->getPagination();
+		if ($pagination === false || $this->dataProvider->getCount() <= 0) {
+			return '';
+		}
+
+		$page = $pagination->getPage();
+		$pageSize = $pagination->getPageSize();
+		$totalCount = $this->dataProvider->getTotalCount();
+		$items = [];
+		foreach ($this->pageSizeList as $value) {
+			if ($value <= 0 && $totalCount > 1000) continue;
+			$items[] = $value > 0 ?
+				['label' => $value, 'url' => $pagination->createUrl(floor($page * $pageSize / $value), $value), 'options' => $value == $pageSize ? ['class' => 'active'] : []] :
+				['label' => 'All', 'url' => str_replace('per-page=1', 'per-page=0', $pagination->createUrl(0, 1))];
+		}
+
+		return \yii\bootstrap\ButtonDropdown::widget([
+			'label' => Yii::t('yii', 'Show {size, plural, =0{all items} =1{one item} other{# items}}', ['size' => $pageSize]),
+			'split' => true,
+			'options' => ['class' => 'btn btn-default btn-sm'],
+			'dropdown' => [
+				'items' => $items,
+				'options' => ['class' => 'dropdown-menu-right dropdown-menu-auto'],
+			],
+		]);
+	}
+
+	public function renderToolbar()
+	{
+		if (!empty($this->toolbarLayout)) {
+			return preg_replace_callback('/{\\w+}/', function ($matches) {
+				$content = $this->renderSection($matches[0]);
+
+				return $content === false ? $matches[0] : $content;
+			}, $this->toolbarLayout);
+		}
+
+		return '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function renderSection($name)
+	{
+		switch ($name) {
+			case '{toolbar}':
+				return $this->renderToolbar();
+			case '{buttons}':
+				return $this->renderButtons();
+			case '{entries}':
+				return $this->renderEntries();
+			default:
+				return parent::renderSection($name);
+		}
+	}
 
 	/**
 	 * Renders the table header.
@@ -139,7 +308,6 @@ class GridView extends \yii\grid\GridView
 
 		return '';
 	}
-
 
 	/**
 	 * Creates column objects and initializes them.

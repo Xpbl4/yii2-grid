@@ -35,6 +35,23 @@ use yii\helpers\Html;
 class ActionColumn extends \yii\grid\ActionColumn
 {
 	/**
+	 * @var string the template used for composing each cell in the action column.
+	 * Tokens enclosed within curly brackets are treated as controller action IDs (also called *button names*
+	 * in the context of action column). They will be replaced by the corresponding button rendering callbacks
+	 * specified in [[buttons]]. For example, the token `{view}` will be replaced by the result of
+	 * the callback `buttons['view']`. If a callback cannot be found, the token will be replaced with an empty string.
+	 *
+	 * As an example, to only have the view, and update button you can add the ActionColumn to your GridView columns as follows:
+	 *
+	 * ```php
+	 * ['class' => 'yii\grid\ActionColumn', 'template' => '{view} {update}'],
+	 * ```
+	 *
+	 * @see buttons
+	 */
+	public $template = '{view} {update} {delete}';
+
+	/**
 	 * @var string the header cell content. Note that it will not be HTML-encoded.
 	 */
 	public $header = 'Actions';
@@ -43,7 +60,7 @@ class ActionColumn extends \yii\grid\ActionColumn
 	 * @var array html options to be applied to the [[initDefaultButton()|default button]].
 	 * @since 2.0.4
 	 */
-	public $buttonOptions = [];
+	public $buttonOptions = ['class' => 'btn btn-default'];
 
 	/**
 	 * @var array html options to be applied to the [[initDefaultButton()|view button]].
@@ -74,7 +91,7 @@ class ActionColumn extends \yii\grid\ActionColumn
 	 * @var array html options to be applied to the [[initDefaultButton()|delete button]].
 	 * @since 2.0.4
 	 */
-	public $deleteOptions = [];
+	public $deleteOptions = ['class' => 'btn btn-danger'];
 
 	/**
 	 * @var string The part of Bootstrap glyphicon class that makes it unique

@@ -1,0 +1,131 @@
+.dropdown-menu-auto {
+	min-width: 100% !important;
+}
+
+.table-grid thead .sorting > td select:after {
+	position: absolute;
+	display: inline-block;
+	line-height: 1.42857143;
+	top: 0;
+	left: 0;
+	z-index: unset;
+	content: "Name";
+}
+
+/** GridView Custom Style */
+.table-grid thead .sorting > td a,
+.table-grid thead .sorting > th a {
+	color: #0a0a0a;
+	display: block;
+	position: relative;
+}
+
+.table-grid thead .sorting > td a:focus,
+.table-grid thead .sorting > td a:hover,
+.table-grid thead .sorting > th a:focus,
+.table-grid thead .sorting > th a:hover {
+	color: #949494;
+}
+
+.table-grid thead .sorting > td a:after,
+.table-grid thead .sorting > th a:after {
+	opacity: 0.2;
+	position: absolute;
+	display: inline-block;
+	font-family: 'Glyphicons Halflings';
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1.42857143;
+	top: 0;
+	right: 0;
+	content: "\e150";
+}
+
+.table-grid thead .sorting.filters > td {
+	min-width: 70px;
+	padding-right: 25px;
+}
+.table-grid thead .sorting.filters > td.unsorted {
+	min-width: 50px;
+	padding-right: 4px;
+}
+.table-grid thead .sorting.filters > td a:after {
+	margin: 5px 0;
+	margin-right: -20px;
+}
+
+.table-grid thead .sorting > td a.asc:after,
+.table-grid thead .sorting > td a.desc:after,
+.table-grid thead .sorting > th a.asc:after,
+.table-grid thead .sorting > th a.desc:after {
+	opacity: 0.5;
+}
+
+.table-grid thead .sorting > td a.asc:after,
+.table-grid thead .sorting > th a.asc:after {
+	content: /*"\e113"*/ "\e151";
+}
+
+.table-grid thead .sorting > td a.desc:after,
+.table-grid thead .sorting > th a.desc:after {
+	content: /*"\e114"*/ "\e152";
+}
+
+.table-grid thead .sorting > td.sort-numerical a.asc:after,
+.table-grid thead .sorting > th.sort-numerical a.asc:after {
+	content: "\e153";
+}
+
+.table-grid thead .sorting > td.sort-numerical a.desc:after,
+.table-grid thead .sorting > th.sort-numerical a.desc:after {
+	content: "\e154";
+}
+
+.table-grid thead .sorting > td.sort-ordinal a.asc:after,
+.table-grid thead .sorting > th.sort-ordinal a.asc:after {
+	content: "\e155";
+}
+
+.table-grid thead .sorting > td.sort-ordinal a.desc:after,
+.table-grid thead .sorting > th.sort-ordinal a.desc:after {
+	content: "\e156";
+}
+
+.table-grid thead .filters > td {
+	padding: 4px;
+}
+
+.table-grid thead .filters > td > .form-control,
+.table-grid thead .filters > th > .form-control {
+	width: 100%;
+}
+
+.table-grid-wrapper .table-grid-paginate .pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+}
+
+.table-grid-wrapper .table-grid-info {
+	padding-top: 8px;
+	white-space: nowrap;
+}
+
+.table-grid-wrapper .table-grid-paginate {
+	margin: 0;
+	white-space: nowrap;
+	text-align: right;
+}
+
+.table-grid-wrapper .table-grid-paginate ul.pagination {
+	margin: 2px 0;
+	white-space: nowrap;
+}
+
+@media screen and (max-width: 767px) {
+	.table-grid-wrapper .table-grid-length,
+	.table-grid-wrapper .table-grid-filter,
+	.table-grid-wrapper .table-grid-info,
+	.table-grid-wrapper .table-grid-paginate {
+		text-align: center;
+	}
+}

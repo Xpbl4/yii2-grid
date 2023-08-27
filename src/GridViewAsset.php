@@ -7,17 +7,19 @@
 
 namespace xpbl4\grid;
 
-use yii\web\AssetBundle;
-
 /**
  * This asset bundle provides the javascript files for the [[GridView]] widget.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class GridViewAsset extends AssetBundle
+class GridViewAsset extends \yii\grid\GridViewAsset
 {
     public $sourcePath = '@xpbl4/grid/assets';
+
+	public $css = [
+		'css/yii.gridView.css',
+	];
 
     public $js = [
         'js/yii.gridView.js',
