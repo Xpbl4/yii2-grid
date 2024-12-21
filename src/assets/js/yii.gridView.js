@@ -101,6 +101,7 @@
 							break;
 						case 'keydown':
 							if (event.keyCode !== 13) return;
+							break;
 						case 'change':
 							$e.find('.table-update').addClass('table-loading');
 							filterProcess = true;

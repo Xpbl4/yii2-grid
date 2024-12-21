@@ -170,6 +170,7 @@ LAYOUT;
 	public function run()
 	{
 		$view = $this->getView();
+		$view->assetManager->bundles[\yii\grid\GridViewAsset::class] = false;
 		GridViewAsset::register($view);
 
 		parent::run();
@@ -282,7 +283,7 @@ LAYOUT;
 	public function renderFilters()
 	{
 		$cells = [];
-		foreach ($this->columns as $column) {
+		foreach ($this->columns as $idx => $column) {
 			/* @var $column \yii\grid\Column */
 			/* @var $column DataColumn */
 			$cellRender = null;
@@ -290,6 +291,10 @@ LAYOUT;
 				if ($this->filterPosition === self::FILTER_POS_HEADER) {
 					$column->filterOptions = ArrayHelper::merge($column->headerOptions, $column->filterOptions);
 				}
+				if ($column instanceof \xpbl4\grid\DataColumn) {
+					$column->filterInputOptions['tabindex'] = ($idx + 1);
+				}
+
 				$cellRender = $column->renderFilterCell();
 			}
 
