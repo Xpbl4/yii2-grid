@@ -355,7 +355,7 @@ LAYOUT;
 		$_options = [];
 		if (isset($matches[3])) {
 			$_formatOptions = @explode('|', $matches[3]);
-			$_format = $_formatOptions[0];
+			$_format = @explode(',', $_formatOptions[0]);
 			if (isset($_formatOptions[1])) $_options['class'] = $_formatOptions[1];
 		}
 		$_label = isset($matches[5]) ? $matches[5] : null;
@@ -369,6 +369,5 @@ LAYOUT;
 			'headerOptions' => $_options,
 		]);
 	}
-
 
 }

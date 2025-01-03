@@ -6,6 +6,8 @@
  * Time: 16:15
  */
 
+namespace xpbl4\grid;
+
 class DataColumnFilter
 {
 	/**

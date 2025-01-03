@@ -89,19 +89,23 @@
 
 				gridData[id] = $.extend(gridData[id], {settings: settings});
 
-				var filterEvents = 'change.yiiGridView keydown.yiiGridView keyup.yiiGridView focusin.yiiGridView';
+				var filterEvents = 'change.yiiGridView keydown.yiiGridView keyup.yiiGridView focusin.yiiGridView blur.yiiGridView';
 				var filterProcess = false;
 				initEventHandler($e, 'filter', filterEvents, settings.filterSelector, function (event) {
 					if ($(event.target).is('input[type="checkbox"]')) return;
 
 					switch (event.type) {
-						case 'focusin': // prevent processing for both keydown and change events
-							$e.find('.table-update').removeClass('table-loading');
-							clearTimeout(gridData[id].filterTimeout);
-							break;
+						// case 'focusin': // prevent processing for both keydown and change events
+							// $e.find('.table-update').removeClass('table-loading');
+							// clearTimeout(gridData[id].filterTimeout);
+							// break;
 						case 'keydown':
-							if (event.keyCode !== 13) return;
-							break;
+							if (event.keyCode !== 13) {
+								$e.find('.table-update').removeClass('table-loading');
+								clearTimeout(gridData[id].filterTimeout);
+
+								return;
+							}
 						case 'change':
 							$e.find('.table-update').addClass('table-loading');
 							filterProcess = true;
@@ -168,7 +172,7 @@
 			}).appendTo($grid);
 			$.each(data, function (name, values) {
 				$.each(values, function (index, value) {
-					if (!value.isEmpty()) $form.append($('<input/>').attr({type: 'hidden', name: name, value: value}));
+					if (!$.isEmptyObject(value)) $form.append($('<input/>').attr({type: 'hidden', name: name, value: value}));
 				});
 			});
 
