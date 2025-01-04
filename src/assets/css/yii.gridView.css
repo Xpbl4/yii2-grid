@@ -113,6 +113,12 @@
 .table-grid tbody > tr > td.form-column {
 	padding: 4px;
 }
+.table-grid-wrapper .table-nowrap th,
+.table-grid-wrapper .table-nowrap td,
+.table-grid-wrapper .table-responsive td,
+.table-grid-wrapper .table-responsive th {
+	white-space: nowrap;
+}
 
 .table-grid-wrapper .table-grid-paginate .pagination {
 	margin: 2px 0;

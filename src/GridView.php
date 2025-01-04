@@ -97,17 +97,23 @@ LAYOUT;
 	public $filterRowOptions = ['class' => 'filters form-group form-group-sm'];
 
 	/**
-	 * @var array the HTML attributes for the grid table element.
-	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
-	 */
-	public $tableOptions = ['class' => 'table table-grid table-bordered table-hover table-update'];
-
-	/**
 	 * @var array the HTML attributes for the container tag of the grid view.
 	 * The "tag" element specifies the tag name of the container element and defaults to "div".
 	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
 	 */
 	public $options = ['class' => 'table-grid-wrapper dt-bootstrap'];
+
+	/**
+	 * @var array|boolean the HTML attributes for the grid container. The grid items will be wrapped in a `div`
+	 * container with the configured HTML attributes. The ID for the container will be auto generated.
+	 */
+	public $containerOptions = [];
+
+	/**
+	 * @var array the HTML attributes for the grid table element.
+	 * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+	 */
+	public $tableOptions = ['class' => 'table table-grid table-bordered table-hover table-update'];
 
 	/**
 	 * @var string the layout that determines how different sections of the grid view should be organized.
@@ -132,8 +138,8 @@ LAYOUT;
 	 */
 	public $pager = ['class' => \yii\widgets\LinkPager::class, 'options' => ['class' => 'pagination pagination-sm']];
 
-	/** @var int[] the list for the pagination widget shows how many items should be showed on page.
-	 *  if -1 is set, all items will be showed
+	/** @var int[] the list for the pagination widget shows how many items should be shown on page.
+	 *  if -1 is set, all items will be shown
 	 */
 	public $pageSizeList = [10, 20, 50, 100, 0];
 
@@ -236,6 +242,21 @@ LAYOUT;
 	}
 
 	/**
+	 * Renders the data models for the grid view.
+	 * @return string the HTML code of table
+	 */
+	public function renderItems()
+	{
+		$table = parent::renderItems();
+
+		if (!empty($this->containerOptions)) {
+			$table = Html::tag('div', $table, $this->containerOptions);
+		}
+
+		return $table;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function renderSection($name)
@@ -327,7 +348,7 @@ LAYOUT;
 				$column = $this->createDataColumn($column);
 			} else {
 				$column = Yii::createObject(array_merge([
-					'class' => $this->dataColumnClass ?: DataColumn::className(),
+					'class' => $this->dataColumnClass ?: DataColumn::class,
 					'grid' => $this,
 				], $column));
 			}
@@ -361,7 +382,7 @@ LAYOUT;
 		$_label = isset($matches[5]) ? $matches[5] : null;
 
 		return Yii::createObject([
-			'class' => $this->dataColumnClass ?: DataColumn::className(),
+			'class' => $this->dataColumnClass ?: DataColumn::class,
 			'grid' => $this,
 			'attribute' => $_attribute,
 			'format' => $_format,
